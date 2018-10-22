@@ -1,5 +1,6 @@
 #if (0)
 
+#include "d_matrix.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -20,8 +21,10 @@ public:
 class Grid
 {
 public:
-	vector<int>* grid;
+	matrix<int>* grid;
+	int size;
 	Grid();
-
+	friend ostream& operator<< (ostream& ostr, const Grid& rhs);
 };
+
 #endif
