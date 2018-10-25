@@ -9,7 +9,7 @@ using namespace std;
 Dictionary::Dictionary()
 {
 	ifstream dictionaryfile;
-	dictionaryfile.open("dictionary.txt");
+	dictionaryfile.open("dictionary_small.txt");
 
 	//Error Checking
 	if(dictionaryfile.fail())
@@ -46,13 +46,14 @@ void Dictionary::sort()
 		temp = dictionary[first];
 		dictionary[first] = dictionary[i];
 		dictionary[i] = temp;
-		if(first%10)
-		{
-		percent = (first/length)*100;
-		cout << "Sorting(" << percent << "%) \r";
-		}
+		//if(first%10 == 0)
+		//{
+		percent = ((length - i)*100/length);
+		cout << "Sorting(" << percent << "%) \r" << flush;
+		//}
 	}
-	cout << endl;
+	cout << "Sorting(100%)" << endl;
+
 	return;
 
 
@@ -182,7 +183,7 @@ ostream& operator<< (ostream& ostr, const Grid& rhs)
 		{
 			ostr << rhs.grid[k][i] << " ";
 		}
-		ostr << endl;
+		ostr << "\r\n";
 	}
 	return ostr;
 }
