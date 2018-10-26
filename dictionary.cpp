@@ -8,8 +8,9 @@ using namespace std;
 
 Dictionary::Dictionary()
 {
+	length = 0;
 	ifstream dictionaryfile;
-	dictionaryfile.open("dictionary_small.txt");
+	dictionaryfile.open("dictionary.txt");
 
 	//Error Checking
 	if(dictionaryfile.fail())
@@ -17,154 +18,104 @@ Dictionary::Dictionary()
 		cerr << "Error opening file" << endl;
 		exit(1);
 	}
-	string temp;
-	while(dictionaryfile >> temp)
+	string str;
+	while(getline(dictionaryfile, str)) 
 	{
-		dictionary.push_back(temp);
+	    if (str.size() > 0) 
+	    {
+	    	dictionary.push_back(str);
+	        length++;
+	    }
 	}
 
 	dictionaryfile.close();
 }
 
+
+
 void Dictionary::sort()
 {
-	int i, j, first;
+    int current;
 	string temp;
 	int length = dictionary.size();
 	double percent = 0;
 
-	for(i = length - 1; i > 0; i--)
+    for(int i = 0; i< length-1; i++)
 	{
-		first = 0;
-		for(j = 1; j <= i; j++)
+		current = i;
+        for(int j = i+1; j<length; j++)
 		{
-			if(dictionary[j] < dictionary[first])
+			if(dictionary[j] < dictionary[current])
 			{
-				first = j;
+				current = j;
 			}
 		}
-		temp = dictionary[first];
-		dictionary[first] = dictionary[i];
-		dictionary[i] = temp;
-		//if(first%10 == 0)
-		//{
-		percent = ((length - i)*100/length);
+		temp = dictionary[i];
+		dictionary[i] = dictionary[current];
+		dictionary[current] = temp;
+
+		percent = (i*100/length);
 		cout << "Sorting(" << percent << "%) \r" << flush;
-		//}
 	}
 	cout << "Sorting(100%)" << endl;
-
 	return;
-
-
-// 	string lowest, temp;
-// 	int min;
-// 	int i = dictionary.size();
-// 	int start = 0; 
-// 	while(start != i)
-// 	{
-// 		lowest = dictionary.at(start);
-// 		for(int k = start; k < i; k++)
-// 		{
-// 			if(dictionary.at(k) < lowest)
-// 			{
-// 				lowest = dictionary.at(k);
-// 				min = k;
-// 			}
-// 		temp = dictionary.at(start);
-// 		dictionary.at(start) = lowest;
-// 		dictionary.at(min) = temp;
-// 		start ++;
-// 		}
-
-// 		if(start%100 == 0)
-// 		{
-// 			cout << "Sorting(" << start << "/" << i << ") \r";
-// 		}
-// 	}
-// 	cout << endl << endl;
 }
 
-int Dictionary::search(string key)
+bool Dictionary::search(int first, int last, string key)
 {
-	int first = 0;
-	int last = dictionary.size() - 1;
-	int mid = 0;
+//    int compare;
+    
+    if (first == last)
+    {
+    	if(key.compare(dictionary[first]) == 0)
+        	return true;
+        else
+        	return false;
+    }
+    
 	while(first <= last)
 	{
-		mid = (first + last) / 2;
-		if(key > dictionary.at(mid))
+		int mid = (first + last) / 2;
+        //compare = key.compare(dictionary[mid]);
+        //cout << compare << endl;
+        
+        if(dictionary[mid] == key)
+        {
+            return true;
+        }
+        
+		else if(key < dictionary[mid])
 		{
-			first = mid + 1;
+			last = mid - 1;;
 		}
-		else if(key < dictionary.at(mid))
+        
+		else
 		{
-			last = mid - 1;
-		}
-		else 
-		{
-			return mid;
+            first = mid + 1;
 		}
 	}
-	return -1;
+	return false;
+
+ //        if(compare == 0)
+ //        {
+ //            return true;
+ //        }
+        
+	// 	else if(compare < 0)
+	// 	{
+	// 		return search(first, mid - 1, key);
+	// 	}
+        
+	// 	else
+	// 	{
+ //            return search(mid + 1, last, key);
+	// 	}
+	// }
+	// return false;
 }
 
-Grid::Grid()
-{
-	string file;
-	int count = 0;
-	int atte = 5;
-	int size;
-	cout << "Which file would you like to open?" << endl;
-	getline(cin, file);
-	while(count < atte) {
-	if(file == "input15.txt") {
-		size = 15;
-		break;
-	}
-	else if(file == "input30.txt") {
-		size = 30;
-		break;
-	}
-	else if(file == "input50.txt") {
-		size = 50;
-		break;
-	}
-	else {
-		cout << "File could not be openned by this program " << atte - count << " attempts remaining." << endl;
-		count++;
-	} }
 
-	if(count == atte)
-	{
-		cout << "You are entering the wrong file names. Exiting program.";
-		return;
-	}
-	vector<vector<int>> temp(size);
-	for(int i = 0; i < size ; i++)
-	{
-		temp[i].resize(size);
-	}
-	ifstream gridfile;
-	gridfile.open(file);
-
-	if(gridfile.fail())
-	{
-		cerr << "Error opening file" << endl;
-		exit(1);
-	}
-	for(int i = 0; i < size; i++)
-	{
-		for(int k = 0; k < size; k++)
-		{
-			gridfile >> temp[k][i];
-		}
-	}
-	grid = temp;
-	gridfile.close();
-}
-
-ostream& operator<< (ostream& ostr, const Dictionary& rhs)
+ostream& operator<<(ostream& ostr, const Dictionary& rhs)
 {
 	int size = rhs.dictionary.size();
 	for(int i = 0; i < size; i++)
@@ -174,16 +125,4 @@ ostream& operator<< (ostream& ostr, const Dictionary& rhs)
 	return ostr;
 }
 
-ostream& operator<< (ostream& ostr, const Grid& rhs)
-{
-	int size = rhs.grid.size();
-	for(int i = 0; i < size; i++)
-	{
-		for(int k = 0; k < size; k++)
-		{
-			ostr << rhs.grid[k][i] << " ";
-		}
-		ostr << "\r\n";
-	}
-	return ostr;
-}
+

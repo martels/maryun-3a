@@ -1,20 +1,17 @@
-#include "main.h"
 #include "dictionary.h"
-#include <iostream>
-#include <fstream>
+#include "grid.h"
+#include "iostream"
+#include "fstream"
+#include "d_matrix.h"
+#include "d_except.h"
+#include "main.h"
+#include <string>
+
 
 using namespace std;
 
 int main()
 {
-	Grid block;
-	Dictionary dictionary;
-	ofstream file;
-	file.open("result.txt");
-	dictionary.sort();
-
-	file << dictionary << "\n";
-	file.close();
-	// cout << block << endl << endl;
-	// cout << dictionary << endl << endl;
+   search();
+   return 0;
 }
